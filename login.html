@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Admin Login — Apex Data Plug</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <div class="page admin-login-page">
+    <main class="content" style="display:flex; flex-direction:column; justify-content:center; flex:1;">
+      <div class="brand" style="justify-content:center; margin-bottom:30px;">
+        <div class="brand-mark">
+                <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <!-- Background circle -->
+            <circle cx="100" cy="100" r="95" fill="#1A1A1A" />
+
+            <!-- Lion mane (outer spikes) -->
+            <g fill="#FFCC00">
+              <path d="M100 20 L108 45 L92 45 Z" />
+              <path d="M140 28 L138 55 L122 48 Z" />
+              <path d="M60 28 L62 55 L78 48 Z" />
+              <path d="M170 55 L155 75 L145 55 Z" />
+              <path d="M30 55 L45 75 L55 55 Z" />
+              <path d="M180 95 L155 100 L155 82 Z" />
+              <path d="M20 95 L45 100 L45 82 Z" />
+              <path d="M172 135 L150 122 L160 108 Z" />
+              <path d="M28 135 L50 122 L40 108 Z" />
+              <path d="M148 165 L132 145 L148 138 Z" />
+              <path d="M52 165 L68 145 L52 138 Z" />
+              <path d="M100 178 L92 152 L108 152 Z" />
+            </g>
+
+            <!-- Mane base circle -->
+            <circle cx="100" cy="100" r="58" fill="#E6A800" />
+
+            <!-- Face -->
+            <circle cx="100" cy="102" r="42" fill="#FFCC00" />
+
+            <!-- Ears -->
+            <circle cx="72" cy="70" r="12" fill="#FFCC00" />
+            <circle cx="128" cy="70" r="12" fill="#FFCC00" />
+            <circle cx="72" cy="70" r="6" fill="#1A1A1A" />
+            <circle cx="128" cy="70" r="6" fill="#1A1A1A" />
+
+            <!-- Eyes -->
+            <ellipse cx="82" cy="96" rx="6" ry="8" fill="#1A1A1A" />
+            <ellipse cx="118" cy="96" rx="6" ry="8" fill="#1A1A1A" />
+
+            <!-- Snout -->
+            <ellipse cx="100" cy="120" rx="22" ry="16" fill="#FFF4D6" />
+
+            <!-- Nose -->
+            <path d="M100 108 L92 120 L108 120 Z" fill="#1A1A1A" />
+
+            <!-- Mouth -->
+            <path d="M100 122 L100 130" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" />
+            <path d="M100 130 Q88 138 78 130" stroke="#1A1A1A" stroke-width="3" fill="none" stroke-linecap="round" />
+            <path d="M100 130 Q112 138 122 130" stroke="#1A1A1A" stroke-width="3" fill="none" stroke-linecap="round" />
+
+            <!-- Whisker dots -->
+            <circle cx="70" cy="118" r="2" fill="#1A1A1A" />
+            <circle cx="70" cy="126" r="2" fill="#1A1A1A" />
+            <circle cx="130" cy="118" r="2" fill="#1A1A1A" />
+            <circle cx="130" cy="126" r="2" fill="#1A1A1A" />
+          </svg>
+        </div>
+        <div class="brand-name">
+         Apex Data<span> Plug </span> Admin
+        </div>
+      </div>
+
+      <form id="loginForm" class="fade-up">
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="admin@yourdomain.com" autocomplete="username" required>
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
+        </div>
+        <div class="field-error show" id="loginError" style="display:none;"></div>
+        <button type="submit" class="btn btn-primary" id="loginBtn">
+          <span class="spinner"></span>
+          <span class="btn-text">Sign In</span>
+        </button>
+      </form>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="supabase-client.js"></script>
+  <script src="login.js"></script>
+</body>
+</html>

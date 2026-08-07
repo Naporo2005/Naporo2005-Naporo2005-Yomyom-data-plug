@@ -1,0 +1,545 @@
+/* =========================================================
+   MTN Data Plug — Design Tokens
+   Palette:
+     --yellow      MTN brand yellow, primary action / signature
+     --ink         near-black, not pure black (headlines, text)
+     --paper       warm off-white background
+     --charcoal    secondary text
+     --line        hairline borders
+     --success     confirmation states
+     --danger      failure states
+   Type:
+     Display  — Space Grotesk (bold, geometric — the "data" feel)
+     Body     — Inter
+     Mono     — IBM Plex Mono (numbers, references, the gauge label)
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root {
+  --yellow: #ffcc08;
+  --yellow-dim: #ffe27a;
+  --ink: #16150f;
+  --paper: #fffcf5;
+  --charcoal: #58564c;
+  --line: #eae5d6;
+  --card: #ffffff;
+  --success: #1b8a3d;
+  --success-bg: #e9f6ec;
+  --danger: #d64545;
+  --danger-bg: #fbeaea;
+
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --shadow-card: 0 1px 2px rgba(22,21,15,0.04), 0 10px 24px -12px rgba(22,21,15,0.12);
+  --shadow-pop: 0 20px 40px -16px rgba(22,21,15,0.28);
+
+  --ease: cubic-bezier(.2,.7,.3,1);
+}
+
+* { box-sizing: border-box; }
+html { -webkit-tap-highlight-color: transparent; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+h1, h2, h3, .display {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.mono {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 500;
+}
+
+a { color: inherit; }
+
+button { font-family: inherit; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ---------- Layout shell ---------- */
+.page {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px;
+  position: sticky;
+  top: 0;
+  background: var(--paper);
+  z-index: 5;
+  border-bottom: 1px solid transparent;
+}
+.topbar.scrolled { border-bottom-color: var(--line); }
+
+.back-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--card);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: transform .15s var(--ease), background .15s var(--ease);
+}
+.back-btn:active { transform: scale(0.92); }
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.brand-mark {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  background: var(--ink);
+  color: var(--yellow);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+}
+.brand-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+}
+.brand-name span { color: var(--yellow); -webkit-text-stroke: 0.6px var(--ink); }
+
+.content {
+  flex: 1;
+  padding: 4px 20px 40px;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  padding: 8px 0 22px;
+}
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--charcoal);
+  background: var(--card);
+  border: 1px solid var(--line);
+  padding: 6px 10px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+}
+.hero-eyebrow .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 0 3px var(--success-bg);
+}
+.hero h1 {
+  font-size: 30px;
+  line-height: 1.12;
+}
+.hero p {
+  margin: 10px 0 0;
+  color: var(--charcoal);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* ---------- Network badge ---------- */
+.network-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin: 22px 0 14px;
+}
+.section-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--charcoal);
+}
+.network-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--ink); color: var(--yellow);
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+}
+.network-chip .swatch { width: 10px; height: 10px; border-radius: 3px; background: var(--yellow); }
+
+.network-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+.network-chip-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--card); color: var(--ink);
+  border: 1.5px solid var(--line);
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .15s var(--ease);
+}
+.network-chip-btn .swatch { width: 8px; height: 8px; border-radius: 3px; background: var(--line); transition: background .15s var(--ease); }
+.network-chip-btn.active { background: var(--ink); color: var(--yellow); border-color: var(--ink); }
+.network-chip-btn.active .swatch { background: var(--yellow); }
+
+/* Brand-accurate colors per network on hover + active/selected */
+.network-chip-btn[data-network="MTN"]:hover,
+.network-chip-btn[data-network="MTN"].active {
+  background-color: var(--yellow);
+  color: var(--ink);
+  border-color: var(--ink);
+}
+.network-chip-btn[data-network="MTN"]:hover .swatch,
+.network-chip-btn[data-network="MTN"].active .swatch { background: var(--ink); }
+
+.network-chip-btn[data-network="Telecel"]:hover,
+.network-chip-btn[data-network="Telecel"].active {
+  background: #e2001a;
+  color: #ffffff;
+  border-color: #e2001a;
+}
+.network-chip-btn[data-network="Telecel"]:hover .swatch,
+.network-chip-btn[data-network="Telecel"].active .swatch { background: #ffffff; }
+
+.network-chip-btn[data-network="AirtelTigo"]:hover,
+.network-chip-btn[data-network="AirtelTigo"].active {
+  background: linear-gradient(135deg, #ed1c24 0%, #ed1c24 45%, #002d72 55%, #002d72 100%);
+  color: #ffffff;
+  border-color: transparent;
+}
+.network-chip-btn[data-network="AirtelTigo"]:hover .swatch,
+.network-chip-btn[data-network="AirtelTigo"].active .swatch { background: #ffffff; }
+
+/* ---------- Bundle cards (signature element: data gauge) ---------- */
+.bundle-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.bundle-card {
+  position: relative;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 16px 14px 14px;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color .18s var(--ease), transform .18s var(--ease), box-shadow .18s var(--ease);
+}
+.bundle-card:active { transform: scale(0.97); }
+/* Per-network accent — MTN is the default (unchanged), Telecel/AirtelTigo
+   override these custom properties on the grid wrapper (set via JS). */
+#bundleGrid {
+  --accent: var(--yellow);
+  --accent-selected-bg: var(--ink);
+  --accent-selected-fg: var(--paper);
+  --accent-selected-ring: var(--yellow);
+  --accent-selected-price: var(--yellow);
+}
+#bundleGrid.network-telecel {
+  --accent: #e2001a;
+  --accent-selected-bg: #e2001a;
+  --accent-selected-fg: #ffffff;
+  --accent-selected-ring: #ffffff;
+  --accent-selected-price: #ffffff;
+}
+#bundleGrid.network-airteltigo {
+  --accent: #ed1c24;
+  --accent-selected-bg: linear-gradient(135deg, #ed1c24 0%, #ed1c24 45%, #002d72 55%, #002d72 100%);
+  --accent-selected-fg: #ffffff;
+  --accent-selected-ring: #ffffff;
+  --accent-selected-price: #ffffff;
+}
+
+.bundle-card:hover { border-color: var(--accent); box-shadow: var(--shadow-card); }
+.bundle-card.selected {
+  border-color: transparent;
+  background: var(--accent-selected-bg);
+  color: var(--accent-selected-fg);
+}
+.bundle-card.selected .bundle-price { color: var(--accent-selected-price); }
+.bundle-card.selected .gauge-ring-bg { stroke: rgba(255,255,255,0.14); }
+.bundle-card.selected .bundle-sub { color: rgba(255,252,245,0.6); }
+
+.gauge-wrap {
+  width: 52px; height: 52px;
+  position: relative;
+}
+.gauge-wrap svg { transform: rotate(-90deg); }
+.gauge-ring-bg { stroke: var(--line); }
+.gauge-ring-fg { stroke: var(--accent); stroke-linecap: round; transition: stroke-dashoffset .6s var(--ease), stroke .3s var(--ease); }
+.bundle-card.selected .gauge-ring-fg { stroke: var(--accent-selected-ring); }
+.gauge-label {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; font-weight: 600;
+  color: var(--ink);
+}
+.bundle-card.selected .gauge-label { color: var(--paper); }
+
+.bundle-label { font-size: 20px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; }
+.bundle-sub { font-size: 11.5px; color: var(--charcoal); font-family: 'IBM Plex Mono', monospace; }
+.bundle-price { font-size: 15px; font-weight: 700; color: var(--ink); }
+
+.bundle-card.disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--line) 0%, #f5f1e4 50%, var(--line) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.3s infinite;
+  border-radius: var(--radius-lg);
+  height: 128px;
+}
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+.empty-state {
+  text-align: center;
+  padding: 40px 12px;
+  color: var(--charcoal);
+  font-size: 14px;
+}
+
+/* ---------- Summary card (checkout / success / failed) ---------- */
+.summary-card {
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+.summary-card::before {
+  content: "";
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 140px; height: 140px;
+  background: var(--yellow);
+  border-radius: 50%;
+  opacity: 0.14;
+}
+.summary-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(255,252,245,0.1);
+  position: relative;
+}
+.summary-row:last-child { border-bottom: none; }
+.summary-row .k { font-size: 12.5px; color: rgba(255,252,245,0.55); font-family: 'IBM Plex Mono', monospace; }
+.summary-row .v { font-size: 15px; font-weight: 600; text-align: right; }
+.summary-total .v { color: var(--yellow); font-size: 22px; font-family: 'Space Grotesk', sans-serif; }
+
+/* ---------- Form ---------- */
+.field { margin-bottom: 16px; }
+.field label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--charcoal);
+  margin-bottom: 7px;
+  font-family: 'IBM Plex Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.field input {
+  width: 100%;
+  padding: 15px 16px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--line);
+  background: var(--card);
+  font-size: 16px;
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--ink);
+  transition: border-color .15s var(--ease);
+}
+.field input::placeholder { color: #c9c4b0; font-family: 'Inter', sans-serif; }
+.field input:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+.field input.error { border-color: var(--danger); }
+.field-hint { font-size: 12px; color: var(--charcoal); margin-top: 6px; }
+.field-error { font-size: 12px; color: var(--danger); margin-top: 6px; display: none; }
+.field-error.show { display: block; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  width: 100%;
+  padding: 17px 20px;
+  border-radius: var(--radius-md);
+  border: none;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: transform .15s var(--ease), opacity .15s var(--ease);
+}
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--yellow); color: var(--ink); }
+.btn-primary:disabled { opacity: 0.5; pointer-events: none; }
+.btn-ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
+.btn-dark { background: var(--ink); color: var(--paper); }
+
+.btn-fixed {
+  position: sticky;
+  bottom: 0;
+  padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--paper) 60%, transparent);
+}
+
+.spinner {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(22,21,15,0.25);
+  border-top-color: var(--ink);
+  animation: spin .7s linear infinite;
+  display: none;
+}
+.btn.loading .spinner { display: inline-block; }
+.btn.loading .btn-text { opacity: 0.6; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- Status pages (success / failed) ---------- */
+.status-hero {
+  padding: 36px 0 8px;
+  text-align: center;
+}
+.status-icon {
+  width: 84px; height: 84px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  animation: pop .5s var(--ease) both;
+}
+.status-icon.success { background: var(--success-bg); color: var(--success); }
+.status-icon.failed { background: var(--danger-bg); color: var(--danger); }
+@keyframes pop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.status-hero h1 { font-size: 24px; }
+.status-hero p { color: var(--charcoal); margin-top: 8px; font-size: 14.5px; }
+
+.delivery-note {
+  display: flex; gap: 10px; align-items: flex-start;
+  background: var(--yellow-dim);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-top: 18px;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed;
+  left: 50%; bottom: 24px;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--ink); color: var(--paper);
+  padding: 13px 18px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: all .3s var(--ease);
+  z-index: 50;
+  box-shadow: var(--shadow-pop);
+  max-width: 90%;
+  text-align: center;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+.toast.danger { background: var(--danger); }
+
+/* ---------- Footer note ---------- */
+.foot-note {
+  text-align: center;
+  font-size: 12px;
+  color: var(--charcoal);
+  padding: 18px 20px 30px;
+}
+
+.ghost-link {
+  color: inherit;
+  text-decoration: none;
+  cursor: none;
+}
+
+/* ---------- Contact strip ---------- */
+.contact-strip {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+.contact-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--line);
+  background: var(--card);
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--ink);
+  text-decoration: none;
+  transition: transform .15s var(--ease), border-color .15s var(--ease);
+}
+.contact-btn:active { transform: scale(0.97); }
+.contact-btn.whatsapp:hover { border-color: #25D366; color: #128C4A; }
+.contact-btn.call:hover { border-color: var(--ink); }
+.contact-strip-label {
+  text-align: center;
+  font-size: 12px;
+  color: var(--charcoal);
+  margin-top: 16px;
+  margin-bottom: -4px;
+}
+
+/* Fade-up entrance for content blocks */
+.fade-up { animation: fadeUp .5s var(--ease) both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
