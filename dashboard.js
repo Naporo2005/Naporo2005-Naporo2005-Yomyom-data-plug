@@ -401,7 +401,7 @@ document.getElementById('loadPlansBtn').addEventListener('click', async () => {
       <div style="max-height:220px; overflow-y:auto; margin-top:4px;">
         ${plans.map(p => `
           <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--line); font-size:13px;">
-            <span class="mono">${p.volume}</span>
+            <span class="mono">${p.volume} (${p.volume_in_mb} MB)</span>
             <span>GH¢${Number(p.price).toFixed(2)}</span>
           </div>
         `).join('')}
