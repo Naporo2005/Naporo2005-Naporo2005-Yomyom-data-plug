@@ -389,7 +389,7 @@ document.getElementById('loadPlansBtn').addEventListener('click', async () => {
     try { plans = JSON.parse(rawText); } catch { plans = null; }
 
     if (!res.ok || !plans) {
-      const detail = plans?.error || plans?.message || rawText || 'no response body';
+      const detail = plans?.error?.code || plans?.error?.message || plans?.error || plans?.message || rawText || 'no response body';
       throw new Error(`HTTP ${res.status}: ${detail}`);
     }
     if (!Array.isArray(plans) || !plans.length) {
