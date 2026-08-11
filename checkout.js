@@ -37,9 +37,32 @@ if (!order) {
   window.location.href = 'index.html';
 }
 
+// Paystack's transaction fee, passed on to the customer so the business
+// nets the full listed bundle price. All math done in pesewas (integers)
+// to avoid floating-point rounding errors.
+const PAYSTACK_FEE_RATE = 0.0195;
+
+function calculatePaystackFee(dataPrice) {
+  const pricePesewas = Math.round(dataPrice * 100);
+  const customerPaysPesewas = Math.ceil(pricePesewas / (1 - PAYSTACK_FEE_RATE));
+  const paystackFeePesewas = customerPaysPesewas - pricePesewas;
+  return {
+    pricePesewas,
+    customerPaysPesewas,
+    paystackFeePesewas,
+    netAmount: pricePesewas / 100,
+    customerPays: customerPaysPesewas / 100,
+    paystackFee: paystackFeePesewas / 100,
+  };
+}
+
+const fees = calculatePaystackFee(Number(order.price));
+
 document.getElementById('sumNetwork').textContent = order.network;
 document.getElementById('sumBundle').textContent = order.label;
-document.getElementById('sumPrice').textContent = `GH¢${Number(order.price).toFixed(2)}`;
+document.getElementById('sumBundlePrice').textContent = `GH¢${fees.netAmount.toFixed(2)}`;
+document.getElementById('sumFee').textContent = `GH¢${fees.paystackFee.toFixed(2)}`;
+document.getElementById('sumPrice').textContent = `GH¢${fees.customerPays.toFixed(2)}`;
 document.getElementById('beneficiaryLabel').textContent = `Beneficiary ${order.network} number (receives the data)`;
 
 const beneficiaryInput = document.getElementById('beneficiary');
@@ -96,7 +119,9 @@ async function handlePay() {
       bundle_id: order.id,
       bundle_label: order.label,
       network: order.network,
-      amount: order.price,
+      amount: fees.customerPays,
+      net_amount: fees.netAmount,
+      paystack_fee: fees.paystackFee,
       beneficiary_number: number,
       payer_number: payerNumber,
       status: 'pending',
@@ -109,7 +134,7 @@ async function handlePay() {
     popup.newTransaction({
       key: settingsRow.paystack_public_key,
       email: `${payerNumber}@gmail.com`,
-      amount: Math.round(Number(order.price) * 100),
+      amount: fees.customerPaysPesewas,
       currency: 'GHS',
       ref: reference,
       channels: ['mobile_money'],
@@ -139,7 +164,7 @@ async function handlePay() {
   } catch (err) {
     console.error(err);
     setLoading(false);
-    showToast(err.message || 'Please check your network Connection.', 'danger');
+    showToast(err.message || 'Something went wrong. Please try again.', 'danger');
   }
 }
 
