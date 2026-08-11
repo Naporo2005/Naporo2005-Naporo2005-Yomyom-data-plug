@@ -28,16 +28,8 @@
         <span class="k">BUNDLE</span>
         <span class="v" id="sumBundle">—</span>
       </div>
-      <div class="summary-row">
-        <span class="k">BUNDLE PRICE</span>
-        <span class="v" id="sumBundlePrice">—</span>
-      </div>
-     <div class="summary-row">
-        <span class="k">PROCESSING FEE</span>
-        <span class="v" id="sumFee">—</span>
-      </div>
       <div class="summary-row summary-total">
-        <span class="k">TOTAL TO PAY</span>
+        <span class="k">TOTAL</span>
         <span class="v" id="sumPrice">—</span>
       </div>
     </div>
@@ -46,9 +38,7 @@
       <div class="field">
         <label for="beneficiary" id="beneficiaryLabel">Beneficiary number (receives the data)</label>
         <input type="tel" id="beneficiary" inputmode="numeric" placeholder="024 000 0000" maxlength="10" autocomplete="off">
-        <div class="field-error" id="beneficiaryError">Invalid Number. Please
-        check if the number is valid for the selected Network.
-          </div>
+        <div class="field-error" id="beneficiaryError">That doesn't look like a valid number for this network.</div>
       </div>
 
       <div class="field">
@@ -62,7 +52,7 @@
         <input type="tel" id="payerNumber" inputmode="numeric" placeholder="024 000 0000" maxlength="10" autocomplete="off">
         <div class="field-hint">Pay with MTN, Telecel, or AirtelTigo Mobile
         Money. Can be the same as <b>Beneficiary Number</b>, or different if
-        you're buying for <b>Some One</b>
+        you're <b>Buying For Someone</b>
         else.</div>
         <div class="field-error" id="payerError">Enter a valid Mobile Money number.</div>
       </div>
@@ -86,3 +76,4 @@
 <script src="checkout.js"></script>
 </body>
 </html>
+
