@@ -60,8 +60,6 @@ const fees = calculatePaystackFee(Number(order.price));
 
 document.getElementById('sumNetwork').textContent = order.network;
 document.getElementById('sumBundle').textContent = order.label;
-document.getElementById('sumBundlePrice').textContent = `GH¢${fees.netAmount.toFixed(2)}`;
-document.getElementById('sumFee').textContent = `GH¢${fees.paystackFee.toFixed(2)}`;
 document.getElementById('sumPrice').textContent = `GH¢${fees.customerPays.toFixed(2)}`;
 document.getElementById('beneficiaryLabel').textContent = `Beneficiary ${order.network} number (receives the data)`;
 
