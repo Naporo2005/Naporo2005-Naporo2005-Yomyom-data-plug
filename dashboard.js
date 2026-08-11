@@ -262,7 +262,7 @@ async function loadTransactions() {
 
 function renderStats() {
   const successTxns = allTransactions.filter(t => t.status === 'success');
-  const total = successTxns.reduce((sum, t) => sum + Number(t.amount), 0);
+  const total = successTxns.reduce((sum, t) => sum + Number(t.net_amount ?? t.amount), 0);
   document.getElementById('statTotalSales').textContent = `GH¢${total.toFixed(2)}`;
   document.getElementById('statSuccessCount').textContent = successTxns.length;
   document.getElementById('statPendingCount').textContent = allTransactions.filter(t => t.status === 'pending').length;
@@ -297,7 +297,7 @@ function renderTransactions() {
       <td>${t.network} ${t.bundle_label}</td>
       <td class="mono">${t.beneficiary_number}</td>
       <td class="mono">${t.payer_number || '—'}</td>
-      <td>GH¢${Number(t.amount).toFixed(2)}</td>
+      <td>GH¢${Number(t.net_amount ?? t.amount).toFixed(2)}</td>
       <td><span class="status-pill ${t.status}">${t.status}</span></td>
       <td><span class="status-pill ${t.delivery_status}">${t.delivery_status.replace('_', ' ')}</span></td>
       <td>${canRetry(t) ? `<button class="retry-btn" data-ref="${t.reference}">Retry</button>` : ''}</td>
