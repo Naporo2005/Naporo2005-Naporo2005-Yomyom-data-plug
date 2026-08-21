@@ -4,15 +4,19 @@ function isValidNumber(num) {
 }
 
 function statusLabel(status, deliveryStatus) {
-  if (status !== 'success') return 'Payment not completed';
+  if (status === 'pending') return 'Payment processing…';
+  if (status !== 'success') return 'Payment failed';
+  // From here, payment was received — every message says so explicitly,
+  // so a delivery delay (e.g. low wallet balance on our end) never reads
+  // like the customer's money didn't go through.
   const map = {
     success: 'Delivered',
-    processing: 'Processing — on its way',
-    queued: 'Queued for delivery',
-    failed: 'Delivery issue — contact us',
-    not_started: 'Preparing your order',
+    processing: 'Payment received — data on the way',
+    queued: 'Payment received — queued for delivery',
+    not_started: 'Payment received — preparing order',
+    failed: 'Payment received — delivery pending',
   };
-  return map[deliveryStatus] || 'Processing';
+  return map[deliveryStatus] || 'Payment received — processing';
 }
 
 function statusClass(status, deliveryStatus) {
