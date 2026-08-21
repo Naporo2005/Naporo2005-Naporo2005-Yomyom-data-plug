@@ -8,7 +8,7 @@ async function loadTransaction() {
   }
 
   const { data: txn, error } = await supabaseClient
-    .from('transactions')
+    .from('public_transaction_lookup')
     .select('*')
     .eq('reference', ref)
     .single();
