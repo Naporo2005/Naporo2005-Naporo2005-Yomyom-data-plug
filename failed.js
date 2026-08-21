@@ -8,7 +8,7 @@ async function init() {
     document.getElementById('txRef').textContent = ref;
 
     const { data: txn } = await supabaseClient
-      .from('transactions')
+      .from('public_transaction_lookup')
       .select('*')
       .eq('reference', ref)
       .single();
