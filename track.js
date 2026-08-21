@@ -45,7 +45,7 @@ async function checkOrders() {
     // Only select non-sensitive fields — never expose payer_number or amount
     // to a phone-number-only lookup.
     const { data: orders, error } = await supabaseClient
-      .from('transactions')
+      .from('public_transaction_lookup')
       .select('reference, network, bundle_label, status, delivery_status, created_at')
       .eq('beneficiary_number', phone)
       .order('created_at', { ascending: false })
