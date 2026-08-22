@@ -10,6 +10,7 @@
 <body>
   <div class="page">
 
+    <div class="sticky-top-wrap" id="stickyTopWrap">
     <header class="topbar" id="topbar">
       <div class="brand">
         <div class="brand-mark">
@@ -73,20 +74,20 @@
       </div>
     </header>
 
-    <div id="sundayMarquee" class="sunday-marquee" style="display:none;">
-      <div class="sunday-marquee-track">
-        <span class="sunday-marquee-item"><span class="dot">●</span>WEEKEND SPECIAL — <span class="pct">10% OFF</span> ALL BUNDLES! 🎉</span>
-        <span class="sunday-marquee-item"><span class="dot">●</span>Every Saturday &amp; Sunday only. Pick your bundle and save 10%! 🔥</span>
-        <span class="sunday-marquee-item"><span class="dot">●</span>WEEKEND SPECIAL — <span class="pct">10% OFF</span> ALL BUNDLES! 🎉</span>
-        <span class="sunday-marquee-item"><span class="dot">●</span>Every Saturday &amp; Sunday only. Pick your bundle and save 10%! 🔥</span>
-      </div>
+    <div id="weekendBanner" class="weekend-banner" style="display:none;">
+      <span class="dot">●</span>
+      WEEKEND SPECIAL — <span class="pct">10% OFF</span> ALL BUNDLES! 🎉
+      &nbsp;·&nbsp; Every Saturday &amp; Sunday only 🔥
+    </div>
     </div>
     <script>
-      // Show the weekend marquee only on Saturday & Sunday (local device time).
+      // Show the weekend banner on Saturday & Sunday (local device time),
+      // or any day via ?promo=preview in the URL for testing.
       (function(){
         var day = new Date().getDay(); // 0 = Sunday, 6 = Saturday
-        if(day === 0 || day === 6){
-          document.getElementById('sundayMarquee').style.display = 'block';
+        var forcePreview = new URLSearchParams(window.location.search).get('promo') === 'preview';
+        if(day === 0 || day === 6 || forcePreview){
+          document.getElementById('weekendBanner').style.display = 'block';
         }
       })();
     </script>
@@ -96,6 +97,7 @@
         <div class="hero-eyebrow">
           <span class="dot"></span> Instant delivery · Pay with MoMo   🇬🇭
         </div>
+
         <h1>Top up mobile data<br>in seconds.</h1>
         <p>
           Pick a network and bundle, drop the beneficiary number, and pay with Mobile Money.
