@@ -549,3 +549,42 @@ button { font-family: inherit; }
 /* Fade-up entrance for content blocks */
 .fade-up { animation: fadeUp .5s var(--ease) both; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ---------- Sunday promo marquee ---------- */
+.sunday-marquee {
+  overflow: hidden;
+  background: var(--ink);
+  border-top: 1px solid var(--yellow);
+  border-bottom: 1px solid var(--yellow);
+  padding: 9px 0;
+}
+.sunday-marquee-track {
+  display: inline-flex;
+  width: max-content;
+  white-space: nowrap;
+  animation: marqueeScroll 16s linear infinite;
+}
+.sunday-marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 26px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  color: var(--paper);
+}
+.sunday-marquee-item .dot { color: var(--yellow); font-size: 10px; }
+.sunday-marquee-item .pct {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  color: var(--yellow);
+}
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sunday-marquee-track { animation: none; }
+}
