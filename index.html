@@ -73,53 +73,20 @@
       </div>
     </header>
 
-    <div id="sundayPromo" class="sunday-promo" style="display:none;">
-      <span class="sunday-promo-badge">SUNDAY</span>
-      <span class="sunday-promo-text">Special — today's lowest data prices of the week. Order now!</span>
+    <div id="sundayMarquee" class="sunday-marquee" style="display:none;">
+      <div class="sunday-marquee-track">
+        <span class="sunday-marquee-item"><span class="dot">●</span>WEEKEND SPECIAL — <span class="pct">10% OFF</span> ALL BUNDLES! 🎉</span>
+        <span class="sunday-marquee-item"><span class="dot">●</span>Every Saturday &amp; Sunday only. Pick your bundle and save 10%! 🔥</span>
+        <span class="sunday-marquee-item"><span class="dot">●</span>WEEKEND SPECIAL — <span class="pct">10% OFF</span> ALL BUNDLES! 🎉</span>
+        <span class="sunday-marquee-item"><span class="dot">●</span>Every Saturday &amp; Sunday only. Pick your bundle and save 10%! 🔥</span>
+      </div>
     </div>
-
-    <style>
-      .sunday-promo{
-        display:flex;
-        align-items:center;
-        gap:10px;
-        margin:12px 20px 0;
-        padding:10px 14px;
-        background:linear-gradient(90deg, #1A1A1A, #241F00);
-        border:1px solid #FFCC00;
-        border-radius:12px;
-        animation:sundayPulse 2.4s ease-in-out infinite, sundayIn 0.4s ease both;
-      }
-      .sunday-promo-badge{
-        flex-shrink:0;
-        background:#FFCC00;
-        color:#1A1A1A;
-        font-weight:800;
-        font-size:0.7rem;
-        letter-spacing:0.06em;
-        padding:4px 9px;
-        border-radius:999px;
-      }
-      .sunday-promo-text{
-        color:#FFF4D6;
-        font-size:0.85rem;
-        font-weight:600;
-        line-height:1.3;
-      }
-      @keyframes sundayPulse{
-        0%, 100%{ box-shadow:0 0 0 0 rgba(255,204,0,0.35); }
-        50%{ box-shadow:0 0 0 6px rgba(255,204,0,0); }
-      }
-      @keyframes sundayIn{
-        from{ opacity:0; transform:translateY(-6px); }
-        to{ opacity:1; transform:translateY(0); }
-      }
-    </style>
     <script>
-      // Show the Sunday promo banner only on Sundays (local device time).
+      // Show the weekend marquee only on Saturday & Sunday (local device time).
       (function(){
-        if(new Date().getDay() === 0){
-          document.getElementById('sundayPromo').style.display = 'flex';
+        var day = new Date().getDay(); // 0 = Sunday, 6 = Saturday
+        if(day === 0 || day === 6){
+          document.getElementById('sundayMarquee').style.display = 'block';
         }
       })();
     </script>
