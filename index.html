@@ -79,15 +79,27 @@
       WEEKEND SPECIAL — <span class="pct">10% OFF</span> ALL BUNDLES! 🎉
       &nbsp;·&nbsp; Every Saturday &amp; Sunday only 🔥
     </div>
+
+    <div id="fridayReminderBanner" class="weekend-banner" style="display:none;">
+      🚨 WEEKEND SPECIAL REMINDER! Our <span class="pct">10% OFF</span> ALL DATA BUNDLES starts tomorrow! 🎉
+      &nbsp;·&nbsp; Every Saturday &amp; Sunday &nbsp;·&nbsp; ⚡ Fast delivery &nbsp;·&nbsp; 💰 Pay with MoMo
+      &nbsp;·&nbsp; Come online tomorrow and BUY YOUR DATA! 🦁🔥
+    </div>
     </div>
     <script>
-      // Show the weekend banner on Saturday & Sunday (local device time),
-      // or any day via ?promo=preview in the URL for testing.
+      // Show the weekend banner on Saturday & Sunday, and a Friday reminder
+      // banner on Fridays (local device time). Use ?promo=preview or
+      // ?promo=friday-preview in the URL to preview either one on any day.
       (function(){
-        var day = new Date().getDay(); // 0 = Sunday, 6 = Saturday
-        var forcePreview = new URLSearchParams(window.location.search).get('promo') === 'preview';
-        if(day === 0 || day === 6 || forcePreview){
+        var day = new Date().getDay(); // 0 = Sunday, 6 = Saturday, 5 = Friday
+        var promoParam = new URLSearchParams(window.location.search).get('promo');
+        var forceWeekendPreview = promoParam === 'preview';
+        var forceFridayPreview = promoParam === 'friday-preview';
+
+        if(day === 0 || day === 6 || forceWeekendPreview){
           document.getElementById('weekendBanner').style.display = 'block';
+        } else if(day === 5 || forceFridayPreview){
+          document.getElementById('fridayReminderBanner').style.display = 'block';
         }
       })();
     </script>
