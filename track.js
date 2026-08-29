@@ -4,7 +4,7 @@ function isValidNumber(num) {
 }
 
 function statusLabel(status, deliveryStatus) {
-  if (status === 'pending') return 'Payment processing…';
+  if (status === 'pending') return 'Payment Pending-Complete the payment';
   if (status !== 'success') return 'Payment failed';
   // From here, payment was received — every message says so explicitly,
   // so a delivery delay (e.g. low wallet balance on our end) never reads
