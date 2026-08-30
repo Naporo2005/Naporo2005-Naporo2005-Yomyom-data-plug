@@ -5,6 +5,89 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Checkout — Apex Data Plug</title>
 <link rel="stylesheet" href="style.css">
+<style>
+  /* Manual-payment fallback modal (shown when balance-precheck says
+     Affordable Data's wallet can't cover this order). Self-contained so
+     it doesn't depend on anything already in style.css. */
+  #manualPayModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 999;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  #manualPayModal.show {
+    display: flex;
+  }
+  #manualPayModal .manual-pay-sheet {
+    background: #fff;
+    width: 100%;
+    max-width: 460px;
+    border-radius: 18px 18px 0 0;
+    padding: 22px 20px 26px;
+    box-sizing: border-box;
+    animation: manualPaySlideUp 0.22s ease-out;
+  }
+  @media (min-width: 480px) {
+    #manualPayModal { align-items: center; }
+    #manualPayModal .manual-pay-sheet { border-radius: 18px; }
+  }
+  @keyframes manualPaySlideUp {
+    from { transform: translateY(24px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  #manualPayModal .manual-pay-icon {
+    font-size: 28px;
+    margin-bottom: 6px;
+  }
+  #manualPayModal h3 {
+    margin: 0 0 10px;
+    font-size: 17px;
+  }
+  #manualPayModal p {
+    margin: 0 0 14px;
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: #333;
+  }
+  #manualPayModal .manual-pay-details {
+    background: #f7f7f7;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-size: 14.5px;
+  }
+  #manualPayModal .manual-pay-details div {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+  }
+  #manualPayModal .manual-pay-details .k { color: #777; }
+  #manualPayModal .manual-pay-details .v { font-weight: 600; }
+  #manualPayModal .manual-pay-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  #manualPayModal button {
+    border: none;
+    border-radius: 12px;
+    padding: 13px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  #manualPayWhatsapp {
+    background: #25D366;
+    color: #fff;
+  }
+  #manualPayClose {
+    background: #eee;
+    color: #333;
+  }
+</style>
 </head>
 <body>
 <div class="page">
@@ -67,6 +150,26 @@
   </div>
 </div>
 
+<!-- Manual-payment fallback popup -->
+<div id="manualPayModal">
+  <div class="manual-pay-sheet">
+    <div class="manual-pay-icon">⚠️</div>
+    <h3>We're currently experiencing an issue with payment processing</h3>
+    <p>Please send the amount below via MoMo so we can process your order manually.</p>
+    <div class="manual-pay-details">
+      <div><span class="k">Amount</span><span class="v" id="manualPayAmount">—</span></div>
+      <div><span class="k">MoMo Number</span><span class="v" id="manualPayNumber">—</span></div>
+      <div><span class="k">Account Name</span><span class="v" id="manualPayName">—</span></div>
+      <div><span class="k">Reference</span><span class="v" id="manualPayRef">—</span></div>
+    </div>
+    <p style="font-size:13px;color:#777;">Use the beneficiary number above as your payment reference. Once we receive it, we'll process your order right away.</p>
+    <div class="manual-pay-btns">
+      <button id="manualPayWhatsapp" type="button">Message us on WhatsApp</button>
+      <button id="manualPayClose" type="button">Close</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast" class="toast"></div>
 
 <script src="https://js.paystack.co/v2/inline.js"></script>
@@ -76,4 +179,3 @@
 <script src="checkout.js"></script>
 </body>
 </html>
-
