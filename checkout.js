@@ -76,6 +76,63 @@ const payerError = document.getElementById('payerError');
   });
 });
 
+// ---- Manual-payment fallback (shown when Affordable Data's wallet balance
+// can't cover this order) ----------------------------------------------
+const MANUAL_PAYMENT_NUMBER = '+233 595 172 004';
+const MANUAL_PAYMENT_NAME = 'Balma Alhassan';
+
+// Same project ref used elsewhere in this app (see config.js / CONFIG.VERIFY_PAYMENT_URL).
+const BALANCE_PRECHECK_URL = (typeof CONFIG !== 'undefined' && CONFIG.BALANCE_PRECHECK_URL)
+  ? CONFIG.BALANCE_PRECHECK_URL
+  : 'https://euezcqqaucxqopfiqdhb.supabase.co/functions/v1/balance-precheck';
+
+async function checkBalanceSufficient(amount) {
+  try {
+    const res = await fetch(BALANCE_PRECHECK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: CONFIG.SUPABASE_PUBLISHABLE_KEY,
+      },
+      body: JSON.stringify({ amount }),
+    });
+    const result = await res.json();
+    // Fail open: if the check itself errors out or the field is missing,
+    // treat as sufficient so a glitch in this feature never blocks a sale.
+    return result?.sufficient !== false;
+  } catch (err) {
+    console.error(err);
+    return true;
+  }
+}
+
+function showManualPaymentModal({ amount, beneficiaryNumber }) {
+  const overlay = document.getElementById('manualPayModal');
+  document.getElementById('manualPayAmount').textContent = `GH¢${amount.toFixed(2)}`;
+  document.getElementById('manualPayNumber').textContent = MANUAL_PAYMENT_NUMBER;
+  document.getElementById('manualPayName').textContent = MANUAL_PAYMENT_NAME;
+  document.getElementById('manualPayRef').textContent = beneficiaryNumber;
+  overlay.classList.add('show');
+}
+
+function hideManualPaymentModal() {
+  document.getElementById('manualPayModal').classList.remove('show');
+}
+
+document.getElementById('manualPayClose').addEventListener('click', hideManualPaymentModal);
+document.getElementById('manualPayModal').addEventListener('click', (e) => {
+  if (e.target.id === 'manualPayModal') hideManualPaymentModal();
+});
+document.getElementById('manualPayWhatsapp').addEventListener('click', () => {
+  const amount = document.getElementById('manualPayAmount').textContent;
+  const ref = document.getElementById('manualPayRef').textContent;
+  const text = encodeURIComponent(
+    `Hi, I sent ${amount} via MoMo for my ${order.network} ${order.label} order. Beneficiary number: ${ref}`
+  );
+  window.open(`https://wa.me/233555358325?text=${text}`, '_blank');
+});
+// -------------------------------------------------------------------------
+
 async function handlePay() {
   const number = beneficiaryInput.value.trim();
   const confirmNumber = confirmInput.value.trim();
@@ -99,6 +156,16 @@ async function handlePay() {
   if (hasError) return;
 
   setLoading(true);
+
+  // Check Affordable Data's wallet balance before ever touching Paystack.
+  // Uses the net bundle price (no Paystack markup) since a manual MoMo
+  // transfer doesn't carry that fee.
+  const sufficient = await checkBalanceSufficient(fees.netAmount);
+  if (!sufficient) {
+    setLoading(false);
+    showManualPaymentModal({ amount: fees.netAmount, beneficiaryNumber: number });
+    return;
+  }
 
   try {
     const { data: settingsRow, error: settingsError } = await supabaseClient
