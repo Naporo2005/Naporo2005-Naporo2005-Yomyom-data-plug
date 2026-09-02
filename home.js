@@ -115,9 +115,37 @@ function selectBundle(card) {
   setTimeout(() => { window.location.href = 'checkout.html'; }, 180);
 }
 
+// Shows the admin-written announcement box (same slot as the weekend
+// banner) only when there's an active row to fetch. RLS on the
+// `announcements` table means this query returns nothing at all when the
+// admin has it switched off, so there's no extra "is it on?" check needed
+// here beyond "did we get a row back".
+async function loadAnnouncement() {
+  try {
+    const { data, error } = await supabaseClient
+      .from('announcements')
+      .select('message')
+      .limit(1)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    const message = (data?.message || '').trim();
+    if (!message) return;
+
+    document.getElementById('announcementText').textContent = message;
+    document.getElementById('announcementBanner').style.display = 'flex';
+  } catch (err) {
+    // Silently skip — a broken announcement fetch should never block the
+    // rest of the store from loading.
+    console.error(err);
+  }
+}
+
 window.addEventListener('scroll', () => {
   document.getElementById('topbar').classList.toggle('scrolled', window.scrollY > 4);
 });
 
 renderNetworkTabs();
 loadBundles();
+loadAnnouncement();
