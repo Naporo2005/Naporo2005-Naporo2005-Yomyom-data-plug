@@ -6,6 +6,29 @@
   <title>Apex Data Plug — Buy Data Instantly Receive It Instantly</title>
   <meta name="description" content="Buy MTN data bundles instantly and pay with Mobile Money.">
   <link rel="stylesheet" href="style.css">
+  <style>
+    .announcement-banner {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 0 0 4px;
+      padding: 14px 20px;
+      background: #FFF8E1;
+      border-bottom: 1px solid #FFE082;
+    }
+    .announcement-icon {
+      font-size: 18px;
+      line-height: 1.4;
+      flex-shrink: 0;
+    }
+    .announcement-text {
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.4;
+      color: #1A1A1A;
+      white-space: pre-wrap;
+    }
+  </style>
 </head>
 <body>
   <div class="page">
@@ -84,6 +107,11 @@
       🚨 WEEKEND SPECIAL REMINDER! Our <span class="pct">10% OFF</span> ALL DATA BUNDLES starts tomorrow! 🎉
       &nbsp;·&nbsp; Every Saturday &amp; Sunday &nbsp;·&nbsp; ⚡ Fast delivery &nbsp;·&nbsp; 💰 Pay with MoMo
       &nbsp;·&nbsp; Come online tomorrow and BUY YOUR DATA! 🦁🔥
+    </div>
+
+    <div id="announcementBanner" class="announcement-banner" style="display:none;">
+      <span class="announcement-icon">📢</span>
+      <span id="announcementText" class="announcement-text"></span>
     </div>
     </div>
     <script>
