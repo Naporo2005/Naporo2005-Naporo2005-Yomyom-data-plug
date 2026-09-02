@@ -117,6 +117,7 @@
         <button class="tab-btn active" data-tab="bundles">Bundles</button>
         <button class="tab-btn" data-tab="transactions">Transactions</button>
         <button class="tab-btn" data-tab="settings">Settings</button>
+        <button class="tab-btn" data-tab="announcement">Announcement</button>
       </div>
 
       <!-- ===================== BUNDLES ===================== -->
@@ -202,8 +203,46 @@
         </div>
       </section>
 
+      <!-- ===================== ANNOUNCEMENT ===================== -->
+      <section class="tab-panel" id="tab-announcement">
+        <div class="settings-card">
+          <div class="field">
+            <label for="announcementMessage">Message to customers</label>
+            <textarea id="announcementMessage" rows="4" placeholder="e.g. MTN bundles delayed today due to network issues — data may take longer than usual to arrive."
+              style="width:100%; box-sizing:border-box; padding:10px 12px; font-family:inherit; font-size:14px; border-radius:10px; border:1px solid #ddd; resize:vertical;"></textarea>
+            <div class="field-hint">This shows on the home page, in the same spot as the weekend banner, exactly as you type it.</div>
+          </div>
+
+          <div class="field" style="display:flex; align-items:center; justify-content:space-between; margin-top:14px;">
+            <label for="announcementToggle" style="margin:0;">Show on home page</label>
+            <label class="switch">
+              <input type="checkbox" id="announcementToggle">
+              <span class="switch-track"></span>
+            </label>
+          </div>
+
+          <button class="btn btn-primary" id="saveAnnouncementBtn" style="margin-top:14px;">Save Announcement</button>
+        </div>
+      </section>
+
     </div>
   </div>
+
+  <style>
+    /* Minimal on/off switch, self-contained so it doesn't depend on admin.css */
+    .switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .switch-track {
+      position: absolute; cursor: pointer; inset: 0;
+      background: #ccc; border-radius: 999px; transition: 0.15s;
+    }
+    .switch-track::before {
+      content: ""; position: absolute; height: 18px; width: 18px;
+      left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.15s;
+    }
+    .switch input:checked + .switch-track { background: #FFCC00; }
+    .switch input:checked + .switch-track::before { transform: translateX(20px); }
+  </style>
 
   <div id="bundleModalRoot"></div>
   <div id="toast" class="toast"></div>
@@ -212,5 +251,65 @@
   <script src="config.js"></script>
   <script src="supabase-client.js"></script>
   <script src="dashboard.js"></script>
+  <script>
+    // Announcement tab: load current message + on/off state, and save on click.
+    // Self-contained here rather than in dashboard.js so it doesn't collide
+    // with whatever else that file already does on load.
+    (function () {
+      const messageEl = document.getElementById('announcementMessage');
+      const toggleEl = document.getElementById('announcementToggle');
+      const saveBtn = document.getElementById('saveAnnouncementBtn');
+
+      async function loadAnnouncement() {
+        const { data, error } = await supabaseClient
+          .from('announcements')
+          .select('message, is_active')
+          .eq('id', true)
+          .maybeSingle();
+
+        if (error) {
+          console.error(error);
+          return;
+        }
+        if (data) {
+          messageEl.value = data.message || '';
+          toggleEl.checked = !!data.is_active;
+        }
+      }
+
+      async function saveAnnouncement() {
+        saveBtn.disabled = true;
+        const originalText = saveBtn.textContent;
+        saveBtn.textContent = 'Saving...';
+
+        const { error } = await supabaseClient
+          .from('announcements')
+          .update({
+            message: messageEl.value.trim(),
+            is_active: toggleEl.checked,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', true);
+
+        saveBtn.disabled = false;
+        saveBtn.textContent = originalText;
+
+        const toast = document.getElementById('toast');
+        if (error) {
+          console.error(error);
+          toast.textContent = 'Could not save announcement.';
+          toast.className = 'toast show danger';
+        } else {
+          toast.textContent = 'Announcement saved.';
+          toast.className = 'toast show';
+        }
+        clearTimeout(saveAnnouncement._t);
+        saveAnnouncement._t = setTimeout(() => { toast.className = 'toast'; }, 3200);
+      }
+
+      saveBtn.addEventListener('click', saveAnnouncement);
+      loadAnnouncement();
+    })();
+  </script>
 </body>
-</html>
+              </html>
