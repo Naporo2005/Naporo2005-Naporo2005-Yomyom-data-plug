@@ -26,6 +26,22 @@ function statusClass(status, deliveryStatus) {
   return 'pending';
 }
 
+// Formats how long an order took to deliver, e.g. "6 hrs" or "1 day 6 hrs".
+// Only meaningful once delivery_status is 'success'.
+function formatDeliveryDuration(createdAt, updatedAt) {
+  const ms = new Date(updatedAt) - new Date(createdAt);
+  if (!Number.isFinite(ms) || ms < 0) return null;
+
+  const totalMinutes = Math.round(ms / 60000);
+  const days = Math.floor(totalMinutes / 1440);
+  const hours = Math.floor((totalMinutes % 1440) / 60);
+  const minutes = totalMinutes % 60;
+
+  if (days > 0) return `${days} day${days > 1 ? 's' : ''} ${hours} hr${hours !== 1 ? 's' : ''}`;
+  if (hours > 0) return `${hours} hr${hours !== 1 ? 's' : ''} ${minutes} min${minutes !== 1 ? 's' : ''}`;
+  return `${minutes} min${minutes !== 1 ? 's' : ''}`;
+}
+
 const phoneInput = document.getElementById('trackPhone');
 phoneInput.addEventListener('input', () => {
   phoneInput.value = phoneInput.value.replace(/\D/g, '').slice(0, 10);
@@ -50,7 +66,7 @@ async function checkOrders() {
     // to a phone-number-only lookup.
     const { data: orders, error } = await supabaseClient
       .from('public_transaction_lookup')
-      .select('reference, network, bundle_label, status, delivery_status, created_at')
+      .select('reference, network, bundle_label, status, delivery_status, created_at, updated_at')
       .eq('beneficiary_number', phone)
       .order('created_at', { ascending: false })
       .limit(20);
@@ -62,7 +78,17 @@ async function checkOrders() {
       return;
     }
 
-    resultsList.innerHTML = orders.map(o => `
+    resultsList.innerHTML = orders.map(o => {
+      const delivered = o.status === 'success' && o.delivery_status === 'success';
+      const duration = delivered ? formatDeliveryDuration(o.created_at, o.updated_at) : null;
+
+      const deliveredRow = delivered ? `
+        <div class="summary-row">
+          <span class="k">DELIVERED</span>
+          <span class="v" style="font-size:12px;">${new Date(o.updated_at).toLocaleString('en-GH', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}${duration ? ` (took ${duration})` : ''}</span>
+        </div>` : '';
+
+      return `
       <div class="summary-card fade-up" style="margin-bottom:12px; padding:16px 18px;">
         <div class="summary-row">
           <span class="k">${o.network} · ${o.bundle_label}</span>
@@ -76,8 +102,10 @@ async function checkOrders() {
           <span class="k">DATE</span>
           <span class="v" style="font-size:12px;">${new Date(o.created_at).toLocaleString('en-GH', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
         </div>
+        ${deliveredRow}
       </div>
-    `).join('');
+    `;
+    }).join('');
   } catch (err) {
     console.error(err);
     resultsList.innerHTML = `<div class="empty-state">Couldn't load orders. Check your connection and try again.</div>`;
