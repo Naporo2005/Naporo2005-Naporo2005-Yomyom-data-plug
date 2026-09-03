@@ -26,22 +26,6 @@ function statusClass(status, deliveryStatus) {
   return 'pending';
 }
 
-// Formats how long an order took to deliver, e.g. "6 hrs" or "1 day 6 hrs".
-// Only meaningful once delivery_status is 'success'.
-function formatDeliveryDuration(createdAt, updatedAt) {
-  const ms = new Date(updatedAt) - new Date(createdAt);
-  if (!Number.isFinite(ms) || ms < 0) return null;
-
-  const totalMinutes = Math.round(ms / 60000);
-  const days = Math.floor(totalMinutes / 1440);
-  const hours = Math.floor((totalMinutes % 1440) / 60);
-  const minutes = totalMinutes % 60;
-
-  if (days > 0) return `${days} day${days > 1 ? 's' : ''} ${hours} hr${hours !== 1 ? 's' : ''}`;
-  if (hours > 0) return `${hours} hr${hours !== 1 ? 's' : ''} ${minutes} min${minutes !== 1 ? 's' : ''}`;
-  return `${minutes} min${minutes !== 1 ? 's' : ''}`;
-}
-
 const phoneInput = document.getElementById('trackPhone');
 phoneInput.addEventListener('input', () => {
   phoneInput.value = phoneInput.value.replace(/\D/g, '').slice(0, 10);
@@ -80,12 +64,11 @@ async function checkOrders() {
 
     resultsList.innerHTML = orders.map(o => {
       const delivered = o.status === 'success' && o.delivery_status === 'success';
-      const duration = delivered ? formatDeliveryDuration(o.created_at, o.updated_at) : null;
 
       const deliveredRow = delivered ? `
         <div class="summary-row">
           <span class="k">DELIVERED</span>
-          <span class="v" style="font-size:12px;">${new Date(o.updated_at).toLocaleString('en-GH', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}${duration ? ` (took ${duration})` : ''}</span>
+          <span class="v" style="font-size:12px;">${new Date(o.updated_at).toLocaleString('en-GH', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
         </div>` : '';
 
       return `
