@@ -30,7 +30,7 @@
   const SUPABASE_URL = "https://euezcqqaucxqopfiqdhb.supabase.co";
   const SUPABASE_ANON_KEY =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1ZXpjcXFhdWN4cW9wZmlxZGhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzNTQ4MzMsImV4cCI6MjEwMDkzMDgzM30.DGVr2BI3tqLb_4oYyOCnDNUH0eKDnsYbHUlq0Ds79HE";
-  const SUPPORT_WHATSAPP = "233595172004"; // update if this changes
+  const SUPPORT_WHATSAPP = "233555358325"; // update if this changes
 
   const MENU_TEXT =
     "I can help you with data orders. To check an order, share the beneficiary phone number. Or reply 1 to see today's data prices.";
