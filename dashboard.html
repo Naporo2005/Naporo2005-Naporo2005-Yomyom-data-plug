@@ -118,6 +118,7 @@
         <button class="tab-btn" data-tab="transactions">Transactions</button>
         <button class="tab-btn" data-tab="settings">Settings</button>
         <button class="tab-btn" data-tab="announcement">Announcement</button>
+        <button class="tab-btn" data-tab="promotion">Promotion</button>
       </div>
 
       <!-- ===================== BUNDLES ===================== -->
@@ -225,6 +226,33 @@
         </div>
       </section>
 
+      <!-- ===================== PROMOTION ===================== -->
+      <section class="tab-panel" id="tab-promotion">
+        <div class="settings-card">
+          <div class="field">
+            <label for="promoDiscount">Weekend discount (%)</label>
+            <input type="number" id="promoDiscount" min="0" max="100" step="0.5" placeholder="10"
+              style="width:100%; box-sizing:border-box; padding:10px 12px; font-family:inherit; font-size:14px; border-radius:10px; border:1px solid #ddd;">
+            <div class="field-hint">
+              Shown as "X% OFF" on the weekend banner (Sat &amp; Sun) and the Friday reminder banner. Change this instead of editing the site code.
+            </div>
+          </div>
+
+          <div class="field" style="display:flex; align-items:center; justify-content:space-between; margin-top:14px;">
+            <label for="promoToggle" style="margin:0;">Weekend promo banners enabled</label>
+            <label class="switch">
+              <input type="checkbox" id="promoToggle">
+              <span class="switch-track"></span>
+            </label>
+            <div class="field-hint" style="margin-top:6px;">
+              Turning this off hides both the weekend and Friday-reminder banners entirely, even on Sat/Sun/Fri. It does not change bundle prices.
+            </div>
+          </div>
+
+          <button class="btn btn-primary" id="savePromotionBtn" style="margin-top:14px;">Save Promotion</button>
+        </div>
+      </section>
+
     </div>
   </div>
 
@@ -311,5 +339,71 @@
       loadAnnouncement();
     })();
   </script>
+  <script>
+    // Promotion tab: load current discount % + on/off state, and save on
+    // click. Same self-contained pattern as the announcement tab above, so
+    // it doesn't collide with whatever dashboard.js already does on load.
+    (function () {
+      const discountEl = document.getElementById('promoDiscount');
+      const toggleEl = document.getElementById('promoToggle');
+      const saveBtn = document.getElementById('savePromotionBtn');
+
+      async function loadPromotion() {
+        const { data, error } = await supabaseClient
+          .from('promotion_banner')
+          .select('discount_percent, is_active')
+          .eq('id', true)
+          .maybeSingle();
+
+        if (error) {
+          console.error(error);
+          return;
+        }
+        if (data) {
+          discountEl.value = data.discount_percent ?? '';
+          toggleEl.checked = !!data.is_active;
+        }
+      }
+
+      async function savePromotion() {
+        const discount = parseFloat(discountEl.value);
+        if (isNaN(discount) || discount < 0 || discount > 100) {
+          showToast('Enter a valid discount percentage (0–100).', 'danger');
+          return;
+        }
+
+        saveBtn.disabled = true;
+        const originalText = saveBtn.textContent;
+        saveBtn.textContent = 'Saving...';
+
+        const { error } = await supabaseClient
+          .from('promotion_banner')
+          .update({
+            discount_percent: discount,
+            is_active: toggleEl.checked,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', true);
+
+        saveBtn.disabled = false;
+        saveBtn.textContent = originalText;
+
+        const toast = document.getElementById('toast');
+        if (error) {
+          console.error(error);
+          toast.textContent = 'Could not save promotion.';
+          toast.className = 'toast show danger';
+        } else {
+          toast.textContent = 'Promotion saved.';
+          toast.className = 'toast show';
+        }
+        clearTimeout(savePromotion._t);
+        savePromotion._t = setTimeout(() => { toast.className = 'toast'; }, 3200);
+      }
+
+      saveBtn.addEventListener('click', savePromotion);
+      loadPromotion();
+    })();
+  </script>
 </body>
-              </html>
+</html>
