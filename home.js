@@ -142,40 +142,28 @@ async function loadAnnouncement() {
   }
 }
 
-// Shows the weekend banner on Saturday & Sunday, and a Friday reminder
-// banner on Fridays (local device time), with the discount percentage
-// pulled from the `promotion_banner` table instead of hardcoded. RLS on
-// that table means this query returns nothing at all when the admin has
-// switched the promo off, same pattern as loadAnnouncement() above — so if
-// no row comes back, neither banner shows, regardless of the day.
-//
-// Use ?promo=preview or ?promo=friday-preview in the URL to preview either
-// banner on any day.
+// Shows the admin-written promotion banner, fully free-text (same pattern
+// as loadAnnouncement() above — write the whole message yourself in the
+// dashboard, flip it on/off there). RLS on `promotion_banner` means this
+// query returns nothing at all when the admin has it switched off, so
+// there's no separate "is it on?" check needed, and no automatic
+// day-of-week logic — you control exactly when it's visible from the
+// dashboard toggle.
 async function loadPromotionBanner() {
   try {
     const { data, error } = await supabaseClient
       .from('promotion_banner')
-      .select('discount_percent')
+      .select('message')
       .limit(1)
       .maybeSingle();
 
     if (error) throw error;
-    if (!data) return; // promo switched off — leave both banners hidden
 
-    const pctText = `${Number(data.discount_percent)}% OFF`;
-    document.getElementById('weekendPct').textContent = pctText;
-    document.getElementById('fridayPct').textContent = pctText;
+    const message = (data?.message || '').trim();
+    if (!message) return;
 
-    const day = new Date().getDay(); // 0 = Sunday, 6 = Saturday, 5 = Friday
-    const promoParam = new URLSearchParams(window.location.search).get('promo');
-    const forceWeekendPreview = promoParam === 'preview';
-    const forceFridayPreview = promoParam === 'friday-preview';
-
-    if (day === 0 || day === 6 || forceWeekendPreview) {
-      document.getElementById('weekendBanner').style.display = 'block';
-    } else if (day === 5 || forceFridayPreview) {
-      document.getElementById('fridayReminderBanner').style.display = 'block';
-    }
+    document.getElementById('promotionText').textContent = message;
+    document.getElementById('promotionBanner').style.display = 'block';
   } catch (err) {
     // A broken promo-banner fetch should never block the rest of the
     // store from loading.
