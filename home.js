@@ -142,6 +142,47 @@ async function loadAnnouncement() {
   }
 }
 
+// Shows the weekend banner on Saturday & Sunday, and a Friday reminder
+// banner on Fridays (local device time), with the discount percentage
+// pulled from the `promotion_banner` table instead of hardcoded. RLS on
+// that table means this query returns nothing at all when the admin has
+// switched the promo off, same pattern as loadAnnouncement() above — so if
+// no row comes back, neither banner shows, regardless of the day.
+//
+// Use ?promo=preview or ?promo=friday-preview in the URL to preview either
+// banner on any day.
+async function loadPromotionBanner() {
+  try {
+    const { data, error } = await supabaseClient
+      .from('promotion_banner')
+      .select('discount_percent')
+      .limit(1)
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) return; // promo switched off — leave both banners hidden
+
+    const pctText = `${Number(data.discount_percent)}% OFF`;
+    document.getElementById('weekendPct').textContent = pctText;
+    document.getElementById('fridayPct').textContent = pctText;
+
+    const day = new Date().getDay(); // 0 = Sunday, 6 = Saturday, 5 = Friday
+    const promoParam = new URLSearchParams(window.location.search).get('promo');
+    const forceWeekendPreview = promoParam === 'preview';
+    const forceFridayPreview = promoParam === 'friday-preview';
+
+    if (day === 0 || day === 6 || forceWeekendPreview) {
+      document.getElementById('weekendBanner').style.display = 'block';
+    } else if (day === 5 || forceFridayPreview) {
+      document.getElementById('fridayReminderBanner').style.display = 'block';
+    }
+  } catch (err) {
+    // A broken promo-banner fetch should never block the rest of the
+    // store from loading.
+    console.error(err);
+  }
+}
+
 window.addEventListener('scroll', () => {
   document.getElementById('topbar').classList.toggle('scrolled', window.scrollY > 4);
 });
@@ -149,3 +190,4 @@ window.addEventListener('scroll', () => {
 renderNetworkTabs();
 loadBundles();
 loadAnnouncement();
+loadPromotionBanner();
