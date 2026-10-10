@@ -230,23 +230,18 @@
       <section class="tab-panel" id="tab-promotion">
         <div class="settings-card">
           <div class="field">
-            <label for="promoDiscount">Weekend discount (%)</label>
-            <input type="number" id="promoDiscount" min="0" max="100" step="0.5" placeholder="10"
-              style="width:100%; box-sizing:border-box; padding:10px 12px; font-family:inherit; font-size:14px; border-radius:10px; border:1px solid #ddd;">
-            <div class="field-hint">
-              Shown as "X% OFF" on the weekend banner (Sat &amp; Sun) and the Friday reminder banner. Change this instead of editing the site code.
-            </div>
+            <label for="promoMessage">Promotion banner message</label>
+            <textarea id="promoMessage" rows="4" placeholder="e.g. 🦁 WEEKEND SPECIAL — 10% OFF ALL BUNDLES! 🎉 · Every Saturday &amp; Sunday only 🔥"
+              style="width:100%; box-sizing:border-box; padding:10px 12px; font-family:inherit; font-size:14px; border-radius:10px; border:1px solid #ddd; resize:vertical;"></textarea>
+            <div class="field-hint">This shows on the home page exactly as you type it. Write the whole banner yourself — update it for weekend specials, reminders, or anything else, with no code changes needed.</div>
           </div>
 
           <div class="field" style="display:flex; align-items:center; justify-content:space-between; margin-top:14px;">
-            <label for="promoToggle" style="margin:0;">Weekend promo banners enabled</label>
+            <label for="promoToggle" style="margin:0;">Show on home page</label>
             <label class="switch">
               <input type="checkbox" id="promoToggle">
               <span class="switch-track"></span>
             </label>
-            <div class="field-hint" style="margin-top:6px;">
-              Turning this off hides both the weekend and Friday-reminder banners entirely, even on Sat/Sun/Fri. It does not change bundle prices.
-            </div>
           </div>
 
           <button class="btn btn-primary" id="savePromotionBtn" style="margin-top:14px;">Save Promotion</button>
@@ -344,14 +339,14 @@
     // click. Same self-contained pattern as the announcement tab above, so
     // it doesn't collide with whatever dashboard.js already does on load.
     (function () {
-      const discountEl = document.getElementById('promoDiscount');
+      const messageEl = document.getElementById('promoMessage');
       const toggleEl = document.getElementById('promoToggle');
       const saveBtn = document.getElementById('savePromotionBtn');
 
       async function loadPromotion() {
         const { data, error } = await supabaseClient
           .from('promotion_banner')
-          .select('discount_percent, is_active')
+          .select('message, is_active')
           .eq('id', true)
           .maybeSingle();
 
@@ -360,18 +355,12 @@
           return;
         }
         if (data) {
-          discountEl.value = data.discount_percent ?? '';
+          messageEl.value = data.message || '';
           toggleEl.checked = !!data.is_active;
         }
       }
 
       async function savePromotion() {
-        const discount = parseFloat(discountEl.value);
-        if (isNaN(discount) || discount < 0 || discount > 100) {
-          showToast('Enter a valid discount percentage (0–100).', 'danger');
-          return;
-        }
-
         saveBtn.disabled = true;
         const originalText = saveBtn.textContent;
         saveBtn.textContent = 'Saving...';
@@ -379,7 +368,7 @@
         const { error } = await supabaseClient
           .from('promotion_banner')
           .update({
-            discount_percent: discount,
+            message: messageEl.value.trim(),
             is_active: toggleEl.checked,
             updated_at: new Date().toISOString(),
           })
