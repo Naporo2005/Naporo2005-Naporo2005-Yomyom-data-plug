@@ -50,6 +50,8 @@ function renderNetworkTabs() {
 
 async function loadBundles() {
   const grid = document.getElementById('bundleGrid');
+  const bigLoader = document.getElementById('bigLoader');
+
   try {
     const { data: bundles, error } = await supabaseClient
       .from('bundles')
@@ -63,6 +65,12 @@ async function loadBundles() {
   } catch (err) {
     console.error(err);
     grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">Couldn't load bundles. Check your connection and try again.</div>`;
+  } finally {
+    // Swap the big loader out for the real grid either way — on error the
+    // grid shows the "couldn't load" message instead of bundle cards.
+    bigLoader.style.display = 'none';
+    grid.style.display = 'grid';
+    grid.classList.add('is-loaded');
   }
 }
 
