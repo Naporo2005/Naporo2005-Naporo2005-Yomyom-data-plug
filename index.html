@@ -1,300 +1,181 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Buy MTN Data Bundles Online in Ghana | Apex Data Plug</title>
-  <meta name="description" content="Buy cheap MTN data bundles online in Ghana and pay instantly with Mobile Money. Fast, automated delivery in minutes — no queues, no hassle. Trusted data reseller in Tamale.">
-  <meta name="keywords" content="buy MTN data online Ghana, cheap MTN data bundle Ghana, instant data top up Ghana, MTN data plug Ghana,Tamale, buy data with MoMo">
-  <meta property="og:title" content="Apex Data Plug — Buy MTN Data Bundles Online">
-  <meta property="og:description" content="Buy cheap MTN data bundles instantly and pay with Mobile Money. Fast automated delivery in minutes.">
-  <meta property="og:type" content="website">
-  <link rel="stylesheet" href="style.css">
-  <link rel="canonical" href="https://naporo2005-naporo2005-yomyom-data-p.vercel.app/">
-  <style>
-    .announcement-banner {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin: 0 0 4px;
-      padding: 14px 20px;
-      background: #FFF8E1;
-      border-bottom: 1px solid #FFE082;
-    }
-    .announcement-icon {
-      font-size: 18px;
-      line-height: 1.4;
-      flex-shrink: 0;
-    }
-    .announcement-text {
-      font-size: 15px;
-      font-weight: 600;
-      line-height: 1.4;
-      color: #1A1A1A;
-      white-space: pre-wrap;
-    }
+const GAUGE_R = 22;
+const GAUGE_C = 2 * Math.PI * GAUGE_R;
+const NETWORKS = ['MTN', 'Telecel', 'AirtelTigo'];
 
-    /* Big branded loader shown while bundles are fetched from Supabase:
-       a small car drives back and forth along a road-shaped bar. */
-    .big-loader {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      padding: 56px 20px 48px;
-      text-align: center;
-    }
-    .loader-road {
-      position: relative;
-      width: 100%;
-      max-width: 260px;
-      height: 56px;
-      background: #2B2B2B;
-      border-radius: 10px;
-      overflow: hidden;
-      perspective: 300px;
-    }
-    .loader-road-line {
-      position: absolute;
-      top: 50%;
-      left: 0;
-      right: 0;
-      height: 3px;
-      transform: translateY(-50%);
-      background-image: repeating-linear-gradient(90deg, #FFCC00 0 16px, transparent 16px 32px);
-      background-size: 32px 3px;
-      animation: roadScroll 0.6s linear infinite;
-    }
-    @keyframes roadScroll {
-      from { background-position: 0 0; }
-      to   { background-position: -32px 0; }
-    }
-    .loader-car {
-      position: absolute;
-      top: 10px;
-      left: -18%;
-      width: 52px;
-      height: 28px;
-      transform-style: preserve-3d;
-      transform: rotateX(8deg) rotateY(-6deg);
-      animation: carDrive 2.2s cubic-bezier(.45,0,.55,1) infinite;
-    }
-    .loader-car svg {
-      width: 100%;
-      height: 100%;
-      display: block;
-      filter: drop-shadow(0 4px 3px rgba(0,0,0,.45));
-    }
-    .loader-smoke {
-      position: absolute;
-      left: 2px;
-      bottom: 3px;
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(220,220,220,.9) 0%, rgba(220,220,220,.35) 60%, transparent 100%);
-      opacity: 0;
-      animation: smokePuff 0.9s ease-out infinite;
-    }
-    .loader-smoke:nth-child(2) { animation-delay: 0.22s; bottom: 5px; }
-    .loader-smoke:nth-child(3) { animation-delay: 0.44s; bottom: 2px; }
-    .loader-smoke:nth-child(4) { animation-delay: 0.66s; bottom: 6px; }
-    @keyframes smokePuff {
-      0%   { transform: translate(0, 0) scale(0.3); opacity: 0.55; }
-      100% { transform: translate(-26px, -14px) scale(1.5); opacity: 0; }
-    }
-    @keyframes carDrive {
-      0%   { left: -18%; }
-      48%  { left: calc(100% - 40px); }
-      50%  { left: calc(100% - 40px); }
-      98%  { left: -18%; }
-      100% { left: -18%; }
-    }
-    .big-loader-text {
-      font-weight: 700;
-      font-size: 15px;
-      color: #1A1A1A;
-      letter-spacing: 0.2px;
-    }
-    .big-loader-sub {
-      font-size: 13px;
-      color: #8a8a8a;
-    }
-    .bundle-grid.is-loaded {
-      animation: bundleGridFadeIn 0.35s ease;
-    }
-    @keyframes bundleGridFadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .loader-car, .loader-road-line, .bundle-grid.is-loaded, .loader-smoke {
-        animation: none;
-      }
-      .loader-car { left: calc(50% - 26px); }
-      .loader-smoke { opacity: 0; }
-    }
-  </style>
-</head>
-<body>
-  <div class="page">
+let allBundles = [];
+let currentNetwork = 'MTN';
 
-    <div class="sticky-top-wrap" id="stickyTopWrap">
-    <header class="topbar" id="topbar">
-      <div class="brand">
-        <div class="brand-mark">
-          <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <!-- Background circle -->
-            <circle cx="100" cy="100" r="95" fill="#1A1A1A" />
+function showToast(message, variant = '') {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = `toast show ${variant}`;
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => { toast.className = 'toast'; }, 3200);
+}
 
-            <!-- Lion mane (outer spikes) -->
-            <g fill="#FFCC00">
-              <path d="M100 20 L108 45 L92 45 Z" />
-              <path d="M140 28 L138 55 L122 48 Z" />
-              <path d="M60 28 L62 55 L78 48 Z" />
-              <path d="M170 55 L155 75 L145 55 Z" />
-              <path d="M30 55 L45 75 L55 55 Z" />
-              <path d="M180 95 L155 100 L155 82 Z" />
-              <path d="M20 95 L45 100 L45 82 Z" />
-              <path d="M172 135 L150 122 L160 108 Z" />
-              <path d="M28 135 L50 122 L40 108 Z" />
-              <path d="M148 165 L132 145 L148 138 Z" />
-              <path d="M52 165 L68 145 L52 138 Z" />
-              <path d="M100 178 L92 152 L108 152 Z" />
-            </g>
+function formatDataLabel(mb) {
+  if (mb >= 1000) {
+    const gb = mb / 1000;
+    return Number.isInteger(gb) ? `${gb}GB` : `${gb.toFixed(1)}GB`;
+  }
+  return `${mb}MB`;
+}
 
-            <!-- Mane base circle -->
-            <circle cx="100" cy="100" r="58" fill="#E6A800" />
+function gaugeSVG(ratio) {
+  const offset = GAUGE_C * (1 - ratio);
+  return `
+    <svg width="52" height="52" viewBox="0 0 52 52">
+      <circle class="gauge-ring-bg" cx="26" cy="26" r="${GAUGE_R}" fill="none" stroke-width="4"></circle>
+      <circle class="gauge-ring-fg" cx="26" cy="26" r="${GAUGE_R}" fill="none" stroke-width="4"
+        stroke-dasharray="${GAUGE_C}" stroke-dashoffset="${offset}"></circle>
+    </svg>`;
+}
 
-            <!-- Face -->
-            <circle cx="100" cy="102" r="42" fill="#FFCC00" />
+function renderNetworkTabs() {
+  const wrap = document.getElementById('networkTabs');
+  wrap.innerHTML = NETWORKS.map(n => `
+    <button class="network-chip-btn ${n === currentNetwork ? 'active' : ''}" data-network="${n}">
+      <span class="swatch"></span> ${n}
+    </button>
+  `).join('');
 
-            <!-- Ears -->
-            <circle cx="72" cy="70" r="12" fill="#FFCC00" />
-            <circle cx="128" cy="70" r="12" fill="#FFCC00" />
-            <circle cx="72" cy="70" r="6" fill="#1A1A1A" />
-            <circle cx="128" cy="70" r="6" fill="#1A1A1A" />
+  wrap.querySelectorAll('.network-chip-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentNetwork = btn.dataset.network;
+      renderNetworkTabs();
+      renderBundles();
+    });
+  });
+}
 
-            <!-- Eyes -->
-            <ellipse cx="82" cy="96" rx="6" ry="8" fill="#1A1A1A" />
-            <ellipse cx="118" cy="96" rx="6" ry="8" fill="#1A1A1A" />
+async function loadBundles() {
+  const grid = document.getElementById('bundleGrid');
+  try {
+    const { data: bundles, error } = await supabaseClient
+      .from('bundles')
+      .select('*')
+      .eq('enabled', true)
+      .order('data_mb', { ascending: true });
 
-            <!-- Snout -->
-            <ellipse cx="100" cy="120" rx="22" ry="16" fill="#FFF4D6" />
+    if (error) throw error;
+    allBundles = bundles || [];
+    renderBundles();
+  } catch (err) {
+    console.error(err);
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">Couldn't load bundles. Check your connection and try again.</div>`;
+  }
+}
 
-            <!-- Nose -->
-            <path d="M100 108 L92 120 L108 120 Z" fill="#1A1A1A" />
+function renderBundles() {
+  const grid = document.getElementById('bundleGrid');
+  grid.classList.remove('network-mtn', 'network-telecel', 'network-airteltigo');
+  grid.classList.add(`network-${currentNetwork.toLowerCase()}`);
 
-            <!-- Mouth -->
-            <path d="M100 122 L100 130" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" />
-            <path d="M100 130 Q88 138 78 130" stroke="#1A1A1A" stroke-width="3" fill="none" stroke-linecap="round" />
-            <path d="M100 130 Q112 138 122 130" stroke="#1A1A1A" stroke-width="3" fill="none" stroke-linecap="round" />
+  const bundles = allBundles.filter(b => (b.network || 'MTN').toLowerCase() === currentNetwork.toLowerCase());
 
-            <!-- Whisker dots -->
-            <circle cx="70" cy="118" r="2" fill="#1A1A1A" />
-            <circle cx="70" cy="126" r="2" fill="#1A1A1A" />
-            <circle cx="130" cy="118" r="2" fill="#1A1A1A" />
-            <circle cx="130" cy="126" r="2" fill="#1A1A1A" />
-          </svg>
+  if (!bundles.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">No ${currentNetwork} bundles available right now.</div>`;
+    return;
+  }
+
+  const maxMb = Math.max(...bundles.map(b => b.data_mb));
+
+  grid.innerHTML = bundles.map(b => {
+    const ratio = b.data_mb / maxMb;
+    return `
+      <button class="bundle-card fade-up" data-id="${b.id}"
+        data-label="${b.label}" data-price="${b.price}" data-network="${b.network}">
+        <div class="gauge-wrap">
+          ${gaugeSVG(ratio)}
+          <div class="gauge-label">${formatDataLabel(b.data_mb)}</div>
         </div>
-        <div class="brand-name">
-          Apex Data <span>Plug</span>
-        </div>
-      </div>
-    </header>
+        <div class="bundle-label">${b.label}</div>
+        <div class="bundle-sub">${b.network} · Non‑expiry*</div>
+        <div class="bundle-price">GH¢${Number(b.price).toFixed(2)}</div>
+      </button>`;
+  }).join('');
 
-    <div id="promotionBanner" class="weekend-banner" style="display:none;">
-      <span id="promotionText" style="white-space:pre-wrap;"></span>
-    </div>
+  grid.querySelectorAll('.bundle-card').forEach(card => {
+    card.addEventListener('click', () => selectBundle(card));
+  });
+}
 
-    <div id="announcementBanner" class="announcement-banner" style="display:none;">
-      <span class="announcement-icon">📢</span>
-      <span id="announcementText" class="announcement-text"></span>
-    </div>
-    </div>
+function selectBundle(card) {
+  document.querySelectorAll('.bundle-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
 
-    <main class="content">
-      <section class="hero fade-up">
-        <div class="hero-eyebrow">
-          <span class="dot"></span> Instant delivery · Pay with MoMo   🇬🇭
-        </div>
+  const order = {
+    id: card.dataset.id,
+    label: card.dataset.label,
+    price: card.dataset.price,
+    network: card.dataset.network,
+  };
+  sessionStorage.setItem('dataplug_order', JSON.stringify(order));
 
-        <h1>Top up mobile data<br>in seconds.</h1>
-        <p>
-          Pick a network and bundle, drop the beneficiary number, and pay with Mobile Money.
-        </p>
-      </section>
-      <div class="network-row">
-        <span class="section-label">Network</span>
-      </div>
-      <div id="networkTabs" class="network-tabs"></div>
+  setTimeout(() => { window.location.href = 'checkout.html'; }, 180);
+}
 
-      <div id="bigLoader" class="big-loader">
-        <div class="loader-road">
-          <div class="loader-road-line"></div>
-          <div class="loader-car">
-            <span class="loader-smoke"></span>
-            <span class="loader-smoke"></span>
-            <span class="loader-smoke"></span>
-            <span class="loader-smoke"></span>
-            <svg viewBox="0 0 64 32" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="carBody" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#FFE066" />
-                  <stop offset="55%" stop-color="#FFCC00" />
-                  <stop offset="100%" stop-color="#C98F00" />
-                </linearGradient>
-                <linearGradient id="carGlass" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#EAF6FF" />
-                  <stop offset="100%" stop-color="#9FCBE0" />
-                </linearGradient>
-                <radialGradient id="wheelShine" cx="35%" cy="35%" r="65%">
-                  <stop offset="0%" stop-color="#4a4a4a" />
-                  <stop offset="100%" stop-color="#0d0d0d" />
-                </radialGradient>
-              </defs>
-              <ellipse cx="32" cy="28.5" rx="26" ry="2.4" fill="rgba(0,0,0,.35)" />
-              <path d="M4 22 L10 22 L14 12 L34 12 L40 22 L60 22 L60 26 L4 26 Z" fill="url(#carBody)" />
-              <path d="M4 22 L10 22 L12 18 L40 18 L40 22 Z" fill="rgba(255,255,255,.25)" />
-              <rect x="16" y="14" width="16" height="8" rx="2" fill="url(#carGlass)" />
-              <circle cx="16" cy="26" r="5" fill="url(#wheelShine)" />
-              <circle cx="48" cy="26" r="5" fill="url(#wheelShine)" />
-              <circle cx="16" cy="26" r="2" fill="#FFF4D6" />
-              <circle cx="48" cy="26" r="2" fill="#FFF4D6" />
-            </svg>
-          </div>
-        </div>
-        <div class="big-loader-text">Fetching live bundles…</div>
-        <div class="big-loader-sub">Pulling the latest prices from the network</div>
-      </div>
+// Shows the admin-written announcement box (same slot as the weekend
+// banner) only when there's an active row to fetch. RLS on the
+// `announcements` table means this query returns nothing at all when the
+// admin has it switched off, so there's no extra "is it on?" check needed
+// here beyond "did we get a row back".
+async function loadAnnouncement() {
+  try {
+    const { data, error } = await supabaseClient
+      .from('announcements')
+      .select('message')
+      .limit(1)
+      .maybeSingle();
 
-      <div id="bundleGrid" class="bundle-grid" aria-live="polite" style="display:none;"></div>
-    </main>
+    if (error) throw error;
 
+    const message = (data?.message || '').trim();
+    if (!message) return;
 
-    <div class="contact-strip" style="padding: 0 20px; margin-top: 8px;">
-      <a href="https://wa.me/233555358325" class="contact-btn whatsapp" target="_blank" rel="noopener">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0012.05 4a8.9 8.9 0 00-7.71 13.34L3 21l3.79-1.32a8.87 8.87 0 004.26 1.09h.01a8.9 8.9 0 006.29-15.19l.25-.26zm-5.55 13.7a7.4 7.4 0 01-3.77-1.03l-.27-.16-2.8.98.94-2.73-.18-.28a7.4 7.4 0 1113.7-3.94 7.4 7.4 0 01-7.62 7.16zm4.06-5.54c-.22-.11-1.31-.65-1.51-.72s-.36-.11-.5.11-.57.72-.7.87-.26.17-.48.06a6.1 6.1 0 01-1.79-1.1 6.7 6.7 0 01-1.24-1.54c-.13-.22 0-.34.1-.45s.22-.26.33-.39a1.5 1.5 0 00.22-.37.4.4 0 000-.39c-.06-.11-.5-1.2-.68-1.65s-.36-.37-.5-.38h-.43a.82.82 0 00-.6.28 2.5 2.5 0 00-.78 1.86 4.34 4.34 0 00.91 2.3 9.9 9.9 0 003.79 3.35c.53.23.94.36 1.26.47a3 3 0 001.4.09 2.3 2.3 0 001.5-1.06 1.9 1.9 0 00.13-1.06c-.06-.1-.2-.16-.42-.27z" /></svg>
-        WhatsApp
-      </a>
-     
-    <a href="track.html" class="contact-btn call" style="text-decoration:none;">Track Order</a>
-    </div>
+    document.getElementById('announcementText').textContent = message;
+    document.getElementById('announcementBanner').style.display = 'flex';
+  } catch (err) {
+    // Silently skip — a broken announcement fetch should never block the
+    // rest of the store from loading.
+    console.error(err);
+  }
+}
 
-    <p class="foot-note">
-      Buy data bundles for all networks in Ghana. Delivery typically completes
-      within a few minutes of payment<a href="login.html"
-        class="ghost-link" aria-hidden="true">.</a>
-    </p>
-  </div>
+// Shows the admin-written promotion banner, fully free-text (same pattern
+// as loadAnnouncement() above — write the whole message yourself in the
+// dashboard, flip it on/off there). RLS on `promotion_banner` means this
+// query returns nothing at all when the admin has it switched off, so
+// there's no separate "is it on?" check needed, and no automatic
+// day-of-week logic — you control exactly when it's visible from the
+// dashboard toggle.
+async function loadPromotionBanner() {
+  try {
+    const { data, error } = await supabaseClient
+      .from('promotion_banner')
+      .select('message')
+      .limit(1)
+      .maybeSingle();
 
-  <div id="toast" class="toast"></div>
+    if (error) throw error;
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="config.js"></script>
-  <script src="supabase-client.js"></script>
-  <script src="home.js"></script>
-  <script src="apex-chat-widget.js"></script>
-</body>
-</html>
+    const message = (data?.message || '').trim();
+    if (!message) return;
+
+    document.getElementById('promotionText').textContent = message;
+    document.getElementById('promotionBanner').style.display = 'block';
+  } catch (err) {
+    // A broken promo-banner fetch should never block the rest of the
+    // store from loading.
+    console.error(err);
+  }
+}
+
+window.addEventListener('scroll', () => {
+  document.getElementById('topbar').classList.toggle('scrolled', window.scrollY > 4);
+});
+
+renderNetworkTabs();
+loadBundles();
+loadAnnouncement();
+loadPromotionBanner();
