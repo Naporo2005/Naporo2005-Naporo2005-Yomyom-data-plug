@@ -119,6 +119,7 @@
         <button class="tab-btn" data-tab="settings">Settings</button>
         <button class="tab-btn" data-tab="announcement">Announcement</button>
         <button class="tab-btn" data-tab="promotion">Promotion</button>
+        <button class="tab-btn" data-tab="complaints">Complaints</button>
       </div>
 
       <!-- ===================== BUNDLES ===================== -->
@@ -246,6 +247,18 @@
 
           <button class="btn btn-primary" id="savePromotionBtn" style="margin-top:14px;">Save Promotion</button>
         </div>
+      </section>
+
+      <!-- ===================== COMPLAINTS ===================== -->
+      <section class="tab-panel" id="tab-complaints">
+        <div class="txn-toolbar">
+          <select id="complaintStatusFilter">
+            <option value="">All statuses</option>
+            <option value="open">Open</option>
+            <option value="resolved">Resolved</option>
+          </select>
+        </div>
+        <div id="complaintsList"></div>
       </section>
 
     </div>
@@ -392,6 +405,89 @@
 
       saveBtn.addEventListener('click', savePromotion);
       loadPromotion();
+    })();
+  </script>
+  <script>
+    // Complaints tab: list customer feedback, filter by status, mark
+    // resolved or delete. Self-contained here, same pattern as the
+    // announcement/promotion tabs above.
+    (function () {
+      let allComplaints = [];
+      const listEl = document.getElementById('complaintsList');
+      const filterEl = document.getElementById('complaintStatusFilter');
+
+      async function loadComplaints() {
+        const { data, error } = await supabaseClient
+          .from('complaints')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error(error);
+          listEl.innerHTML = `<div class="empty-state">Couldn't load complaints.</div>`;
+          return;
+        }
+        allComplaints = data || [];
+        renderComplaints();
+      }
+
+      function renderComplaints() {
+        const statusFilter = filterEl.value;
+        const filtered = allComplaints.filter(c => !statusFilter || c.status === statusFilter);
+
+        if (!filtered.length) {
+          listEl.innerHTML = `<div class="empty-state">No complaints here.</div>`;
+          return;
+        }
+
+        listEl.innerHTML = filtered.map(c => `
+          <div class="settings-card" style="margin-bottom:10px; display:flex; flex-direction:column; gap:8px;" data-id="${c.id}">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+              <div>
+                <div style="font-weight:700; font-size:14px;">${c.name ? c.name : 'Anonymous'} · <span class="mono">${c.phone}</span></div>
+                <div style="font-size:12px; color:var(--charcoal);">${new Date(c.created_at).toLocaleString('en-GH', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</div>
+              </div>
+              <span class="status-pill ${c.status}">${c.status}</span>
+            </div>
+            <div style="font-size:14px; white-space:pre-wrap;">${c.message}</div>
+            <div style="display:flex; gap:8px; margin-top:4px;">
+              ${c.status === 'open'
+                ? `<button class="btn btn-ghost" data-action="resolve" style="width:auto; padding:7px 14px; font-size:13px;">Mark Resolved</button>`
+                : `<button class="btn btn-ghost" data-action="reopen" style="width:auto; padding:7px 14px; font-size:13px;">Reopen</button>`}
+              <button class="btn btn-ghost" data-action="delete" style="width:auto; padding:7px 14px; font-size:13px; color:var(--danger);">Delete</button>
+            </div>
+          </div>
+        `).join('');
+
+        listEl.querySelectorAll('[data-action="resolve"]').forEach(btn => {
+          btn.addEventListener('click', () => updateStatus(btn.closest('[data-id]').dataset.id, 'resolved'));
+        });
+        listEl.querySelectorAll('[data-action="reopen"]').forEach(btn => {
+          btn.addEventListener('click', () => updateStatus(btn.closest('[data-id]').dataset.id, 'open'));
+        });
+        listEl.querySelectorAll('[data-action="delete"]').forEach(btn => {
+          btn.addEventListener('click', () => deleteComplaint(btn.closest('[data-id]').dataset.id));
+        });
+      }
+
+      async function updateStatus(id, status) {
+        const { error } = await supabaseClient.from('complaints').update({ status }).eq('id', id);
+        if (error) { showToast('Could not update complaint.', 'danger'); return; }
+        const cached = allComplaints.find(c => c.id === id);
+        if (cached) cached.status = status;
+        renderComplaints();
+      }
+
+      async function deleteComplaint(id) {
+        const { error } = await supabaseClient.from('complaints').delete().eq('id', id);
+        if (error) { showToast('Could not delete complaint.', 'danger'); return; }
+        allComplaints = allComplaints.filter(c => c.id !== id);
+        renderComplaints();
+        showToast('Complaint deleted.');
+      }
+
+      filterEl.addEventListener('change', renderComplaints);
+      loadComplaints();
     })();
   </script>
 </body>
