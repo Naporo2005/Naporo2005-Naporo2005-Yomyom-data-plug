@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Leave Feedback — Apex Data Plug</title>
+  <title>Leave Feedback or report an order — Apex Data Plug</title>
   <link rel="stylesheet" href="style.css">
   <style>
     .feedback-wrap {
@@ -109,13 +109,13 @@
       </p>
 
       <form id="feedbackForm">
-        <div class="feedback-field">
+        <!---<div class="feedback-field">
           <label for="fbName">Name (optional)</label>
           <input type="text" id="fbName" placeholder="e.g. Kwame">
-        </div>
+        </div>--->
         <div class="feedback-field">
           <label for="fbRef">Beneficiary number or order reference</label>
-          <input type="text" id="fbRef" placeholder="e.g. 024XXXXXXX or Afor_XXXXXXXX" required>
+          <input type="text" id="fbRef" placeholder="0240000000 or DP-xxxxxxxx " required>
         </div>
         <div class="feedback-field">
           <label for="fbMessage">Your complaint</label>
@@ -126,7 +126,7 @@
 
       <div class="feedback-success" id="fbSuccess">
         <div class="icon">✅</div>
-        <h2 style="margin:0 0 6px;">Thanks — got it!</h2>
+        <h2 style="margin:0 0 6px;">Thank you</h2>
         <p style="color:#555; font-size:14px;">We'll look into this and get back to you if needed.</p>
         <a href="index.html" class="contact-btn" style="display:inline-block; margin-top:16px; text-decoration:none;">Back to Store</a>
       </div>
