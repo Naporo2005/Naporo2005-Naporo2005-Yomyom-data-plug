@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Leave Feedback — Apex Data Plug</title>
+  <title>Leave a Feedback or report an order — Apex Data Plug</title>
   <link rel="stylesheet" href="style.css">
   <style>
     .feedback-wrap {
@@ -61,6 +61,41 @@
     .feedback-success .icon {
       font-size: 40px;
       margin-bottom: 10px;
+    }
+    .success-check {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 10px;
+    }
+    .success-check circle {
+      fill: none;
+      stroke: #1A1A1A;
+      stroke-width: 3;
+      stroke-dasharray: 166;
+      stroke-dashoffset: 166;
+      animation: successCircle 0.5s ease-out forwards;
+    }
+    .success-check path {
+      fill: none;
+      stroke: #1A1A1A;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 48;
+      stroke-dashoffset: 48;
+      animation: successTick 0.35s 0.45s ease-out forwards;
+    }
+    @keyframes successCircle {
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes successTick {
+      to { stroke-dashoffset: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .success-check circle, .success-check path {
+        animation: none;
+        stroke-dashoffset: 0;
+      }
     }
   </style>
 </head>
@@ -121,7 +156,10 @@
       </form>
 
       <div class="feedback-success" id="fbSuccess">
-        <div class="icon">✅</div>
+        <svg class="success-check" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="28" cy="28" r="26" />
+          <path d="M16 29 L24 37 L40 19" />
+        </svg>
         <h2 style="margin:0 0 6px;">Thank you</h2>
         <p style="color:#555; font-size:14px;">We'll look into this and get back to you if needed.</p>
         <a href="index.html" class="contact-btn" style="display:inline-block; margin-top:16px; text-decoration:none;">Back to Store</a>
