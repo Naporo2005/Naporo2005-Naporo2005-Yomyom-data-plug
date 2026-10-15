@@ -1,1 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Leave Feedback — Apex Data Plug</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .feedback-wrap {
+      max-width: 420px;
+      margin: 0 auto;
+      padding: 0 20px 40px;
+    }
+    .feedback-intro {
+      font-size: 14px;
+      color: #555;
+      line-height: 1.5;
+      margin: 4px 0 20px;
+    }
+    .feedback-field {
+      margin-bottom: 16px;
+    }
+    .feedback-field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #1A1A1A;
+    }
+    .feedback-field input,
+    .feedback-field textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 14px;
+      font-family: inherit;
+      font-size: 15px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      resize: vertical;
+    }
+    .feedback-submit {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: #1A1A1A;
+      color: #FFCC00;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    .feedback-submit:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+    .feedback-success {
+      display: none;
+      text-align: center;
+      padding: 32px 20px;
+    }
+    .feedback-success .icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">
+          <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="100" cy="100" r="95" fill="#1A1A1A" />
+            <g fill="#FFCC00">
+              <path d="M100 20 L108 45 L92 45 Z" />
+              <path d="M140 28 L138 55 L122 48 Z" />
+              <path d="M60 28 L62 55 L78 48 Z" />
+              <path d="M170 55 L155 75 L145 55 Z" />
+              <path d="M30 55 L45 75 L55 55 Z" />
+              <path d="M180 95 L155 100 L155 82 Z" />
+              <path d="M20 95 L45 100 L45 82 Z" />
+              <path d="M172 135 L150 122 L160 108 Z" />
+              <path d="M28 135 L50 122 L40 108 Z" />
+              <path d="M148 165 L132 145 L148 138 Z" />
+              <path d="M52 165 L68 145 L52 138 Z" />
+              <path d="M100 178 L92 152 L108 152 Z" />
+            </g>
+            <circle cx="100" cy="100" r="58" fill="#E6A800" />
+            <circle cx="100" cy="102" r="42" fill="#FFCC00" />
+            <circle cx="72" cy="70" r="12" fill="#FFCC00" />
+            <circle cx="128" cy="70" r="12" fill="#FFCC00" />
+            <circle cx="72" cy="70" r="6" fill="#1A1A1A" />
+            <circle cx="128" cy="70" r="6" fill="#1A1A1A" />
+            <ellipse cx="82" cy="96" rx="6" ry="8" fill="#1A1A1A" />
+            <ellipse cx="118" cy="96" rx="6" ry="8" fill="#1A1A1A" />
+            <ellipse cx="100" cy="120" rx="22" ry="16" fill="#FFF4D6" />
+            <path d="M100 108 L92 120 L108 120 Z" fill="#1A1A1A" />
+          </svg>
+        </div>
+        <div class="brand-name">Apex Data <span>Plug</span></div>
+      </div>
+    </header>
 
+    <main class="content feedback-wrap">
+      <h1 style="margin-top:12px;">Leave Feedback</h1>
+      <p class="feedback-intro">
+        Had an issue with an order, or something you think we should know? Tell us below —
+        we read every message.
+      </p>
+
+      <form id="feedbackForm">
+        <div class="feedback-field">
+          <label for="fbName">Name (optional)</label>
+          <input type="text" id="fbName" placeholder="e.g. Kwame">
+        </div>
+        <div class="feedback-field">
+          <label for="fbRef">Beneficiary number or order reference</label>
+          <input type="text" id="fbRef" placeholder="e.g. 024XXXXXXX or Afor_XXXXXXXX" required>
+        </div>
+        <div class="feedback-field">
+          <label for="fbMessage">Your complaint</label>
+          <textarea id="fbMessage" rows="5" placeholder="Tell us what happened..." required></textarea>
+        </div>
+        <button type="submit" class="feedback-submit" id="fbSubmitBtn">Send Complaint</button>
+      </form>
+
+      <div class="feedback-success" id="fbSuccess">
+        <div class="icon">✅</div>
+        <h2 style="margin:0 0 6px;">Thanks — got it!</h2>
+        <p style="color:#555; font-size:14px;">We'll look into this and get back to you if needed.</p>
+        <a href="index.html" class="contact-btn" style="display:inline-block; margin-top:16px; text-decoration:none;">Back to Store</a>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="supabase-client.js"></script>
+  <script>
+    function showToast(message, variant = '') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = `toast show ${variant}`;
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => { toast.className = 'toast'; }, 3200);
+    }
+
+    document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('fbName').value.trim();
+      const beneficiaryOrReference = document.getElementById('fbRef').value.trim();
+      const message = document.getElementById('fbMessage').value.trim();
+      const submitBtn = document.getElementById('fbSubmitBtn');
+
+      if (!beneficiaryOrReference || !message) {
+        showToast('Please fill in the beneficiary number/reference and your complaint.', 'danger');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+
+      const { error } = await supabaseClient
+        .from('complaints')
+        .insert({ name: name || null, beneficiary_or_reference: beneficiaryOrReference, message });
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send Complaint';
+
+      if (error) {
+        console.error(error);
+        showToast('Could not send feedback. Try again.', 'danger');
+        return;
+      }
+
+      document.getElementById('feedbackForm').style.display = 'none';
+      document.getElementById('fbSuccess').style.display = 'block';
+    });
+  </script>
+</body>
+</html>
