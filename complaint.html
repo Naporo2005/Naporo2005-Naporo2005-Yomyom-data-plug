@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Leave Feedback or report an order — Apex Data Plug</title>
+  <title>Leave Feedback — Apex Data Plug</title>
   <link rel="stylesheet" href="style.css">
   <style>
     .feedback-wrap {
@@ -109,10 +109,6 @@
       </p>
 
       <form id="feedbackForm">
-        <!---<div class="feedback-field">
-          <label for="fbName">Name (optional)</label>
-          <input type="text" id="fbName" placeholder="e.g. Kwame">
-        </div>--->
         <div class="feedback-field">
           <label for="fbRef">Beneficiary number or order reference</label>
           <input type="text" id="fbRef" placeholder="0240000000 or DP-xxxxxxxx " required>
@@ -150,7 +146,6 @@
     document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const name = document.getElementById('fbName').value.trim();
       const beneficiaryOrReference = document.getElementById('fbRef').value.trim();
       const message = document.getElementById('fbMessage').value.trim();
       const submitBtn = document.getElementById('fbSubmitBtn');
@@ -165,7 +160,7 @@
 
       const { error } = await supabaseClient
         .from('complaints')
-        .insert({ name: name || null, beneficiary_or_reference: beneficiaryOrReference, message });
+        .insert({ beneficiary_or_reference: beneficiaryOrReference, message });
 
       submitBtn.disabled = false;
       submitBtn.textContent = 'Send Complaint';
